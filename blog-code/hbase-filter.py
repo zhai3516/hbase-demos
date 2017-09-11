@@ -62,7 +62,7 @@ def save_main_v1():
         timestamp = time.time() + i
         rowkey = "ARTICLE" + str(timestamp * 1000000)
         data = {
-            "basic:" + "ArticleID": str(),
+            "basic:" + "ArticleID": str(i),
             "basic:" + "ArticleTypeID": str(article_type_id),
             "basic:" + "Created": str(timestamp),
         }
@@ -104,13 +104,13 @@ if __name__ == '__main__':
     # save_main_v1()  # 导入100 条数据，50条ArticleTypeID=0，50条ArticleTypeID=1
     #filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:1')"
     #results = recent_events_v1(start=0, end=1505023900, table="test_article_1", filter_str=filter_str)
-    # print len([i for i in results])  # 期望值为50, 实际值为0
+    # print len([i for i in results])  # 期望值为50, 实际值为50, 但是使用java 查询确是0
 
     # 问题1修复
     # save_main_v2()  # 导入100 条数据，50条ArticleTypeID=0，50条ArticleTypeID=1
     # filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 1))
     # results = recent_events_v1(start=0, end=1505023900, table="test_article_2", filter_str=filter_str)
-    # print len([i for i in results])  # 期望值为50, 实际值为50
+    # print len([i for i in results])  # 期望值为50, 实际值为50，使用java 查询也是50
 
     # 问题2重现
     # results = recent_events_v1(start=0, end=1505024365, table="test_article_2")
