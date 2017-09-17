@@ -113,16 +113,16 @@ if __name__ == '__main__':
     # print len([i for i in results])  # 期望值为50, 实际值为50，使用java 查询也是50
 
     # 问题2重现
-    results = recent_events_v1(start=0, end=1505024364, table="test_article_2")
-    print len([i for i in results])  # 期望值为50, 实际值为100
-    results = recent_events_v1(start=1505024365, end=1505024365 + 10, table="test_article_2")
-    print len([i for i in results])  # 期望值为10, 实际值为0
+    # results = recent_events_v1(start=0, end=1505024364, table="test_article_2")
+    # print len([i for i in results])  # 期望值为50, 实际值为100
+    # results = recent_events_v1(start=1505024365, end=1505024365 + 10, table="test_article_2")
+    # print len([i for i in results])  # 期望值为10, 实际值为0
 
     # 问题2修复
-    results = recent_events_v1(start=0.0, end=1505024364.0, table="test_article_2")
-    print len([i for i in results])  # 期望值为50, 实际值为50
-    results = recent_events_v1(start=1505024365.0, end=1505024365.0 + 10, table="test_article_2")
-    print len([i for i in results])  # 期望值为10, 实际值为10
+    # results = recent_events_v1(start=0.0, end=1505024364.0, table="test_article_2")
+    # print len([i for i in results])  # 期望值为50, 实际值为50
+    # results = recent_events_v1(start=1505024365.0, end=1505024365.0 + 10, table="test_article_2")
+    # print len([i for i in results])  # 期望值为10, 实际值为10
 
     # 问题2思考
     # save_main_v3()  # 导入100 条数据，50条ArticleTypeID=0，50条ArticleTypeID=1
@@ -130,5 +130,17 @@ if __name__ == '__main__':
     # print len([i for i in results])  # 期望值为50, 实际值为50
     # results = recent_events_v2(start=1505027700, end=1505027700 + 10, table="test_article_3")
     # print len([i for i in results])  # 期望值为10, 实际值为10
+
+    # 问题3复现
+    # filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257))
+    # results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str)
+    # print len([i for i in results])  # 期望值为2, 实际报错
+
+    # 问题3修复
+    filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257).replace("'", "''"))
+    results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2")
+    print len([i for i in results])  # 期望值为3 , 实际结果为3
+    results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str)
+    print len([i for i in results])  # 期望值为2 , 实际结果为2
 
     print "Hello World!"
