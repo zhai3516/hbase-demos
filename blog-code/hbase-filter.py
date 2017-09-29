@@ -4,7 +4,7 @@
 实验代码 for blog：
     http://zhaif.us:8080/2017/09/09/python-hbase-tip-1/
     http://zhaif.us:8080/2017/09/17/python-hbase-tip-2/
- *     http://zhaif.us:8080/2017/09/28/python-hbase-tip-3/
+    http://zhaif.us:8080/2017/09/28/python-hbase-tip-3/
 测试 filter、scan 的一些小问题
 '''
 import struct
