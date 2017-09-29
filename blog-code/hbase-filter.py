@@ -3,10 +3,13 @@
 '''
 实验代码 for blog：
     http://zhaif.us:8080/2017/09/09/python-hbase-tip-1/
+    http://zhaif.us:8080/2017/09/17/python-hbase-tip-2/
+ *     http://zhaif.us:8080/2017/09/28/python-hbase-tip-3/
 测试 filter、scan 的一些小问题
 '''
 import struct
 import time
+import traceback
 
 import happybase
 
@@ -17,7 +20,7 @@ TABLE = 'article'
 def get_connetion_pool(timeout=2):
     global conn_pool
     if conn_pool is None:
-        conn_pool = happybase.ConnectionPool(10)
+        conn_pool = happybase.ConnectionPool(1)
     return conn_pool
 
 
@@ -132,15 +135,24 @@ if __name__ == '__main__':
     # print len([i for i in results])  # 期望值为10, 实际值为10
 
     # 问题3复现
-    # filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257))
-    # results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str)
+    # for i in range(5):
+    #     try:
+    #         filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257))
+    #         results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str if i % 2 == 0 else None)
+    #         print len([i for i in results])  # 期望值为2, 实际报错
+    #     except:
+    #         print traceback.format_exc()
+    #     time.sleep(5)
+    #     print '######################################################'
+    # conn_pool = None
+    # results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2")
     # print len([i for i in results])  # 期望值为2, 实际报错
 
     # 问题3修复
-    filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257).replace("'", "''"))
-    results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2")
-    print len([i for i in results])  # 期望值为3 , 实际结果为3
-    results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str)
-    print len([i for i in results])  # 期望值为2 , 实际结果为2
+    # filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257).replace("'", "''"))
+    # results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2")
+    # print len([i for i in results])  # 期望值为3 , 实际结果为3
+    # results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str)
+    # print len([i for i in results])  # 期望值为2 , 实际结果为2
 
     print "Hello World!"

@@ -2,8 +2,6 @@ package com.zhaif;
 /*
  * 实验代码 for blog：
  *     http://zhaif.us:8080/2017/09/09/python-hbase-tip-1/
- *     http://zhaif.us:8080/2017/09/17/python-hbase-tip-2/
- *     http://zhaif.us:8080/2017/09/28/python-hbase-tip-3/
  * 测试 scan filter, 对比 python/java
  */
 import java.io.IOException;
@@ -35,8 +33,6 @@ public class App {
 	public static void main(String[] args) throws IOException {
 		System.out.println("Hello World!");
 		test_hbase_filter();
-        test_hbase_scan();
-        test_quote();
 		System.out.println("=========================================");
 
 	}
@@ -107,71 +103,5 @@ public class App {
 
 	}
 
-	public static void test_hbase_scan() throws IOException {
-		// 问题 2 复现
-		TableName tableName = TableName.valueOf("test_article_2");
-		Configuration conf = HBaseConfiguration.create();
-		Connection conn = ConnectionFactory.createConnection(conf);
-		Table table = conn.getTable(tableName);
-
-		// scan python data
-		// 写入的时候每秒 1 条，所以这段时间的数据为 10 条
-		Scan s = new Scan(Bytes.toBytes("ARTICLE1.505024365e+15"), Bytes.toBytes("ARTICLE1.505024375e+15"));
-		ResultScanner scanner = table.getScanner(s);
-		int num = 0;
-		for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-			num++;
-		}
-		System.out.println("Found row: " + num); // 预期 10，结果为 10
-
-		// scan java data
-		tableName = TableName.valueOf("test_article_java_1");
-		table = conn.getTable(tableName);
-		s = new Scan(Bytes.toBytes("ARTICLE1505031256242000"), Bytes.toBytes("ARTICLE1505031256259000"));
-		scanner = table.getScanner(s);
-		num = 0;
-		for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-			num++;
-		}
-		System.out.println("Found row: " + num); // 预期 10，结果为 10
-
-	}
-
-   	public static void test_quote() throws IOException {
-        // 问题 3 复现
-		TableName tableName = TableName.valueOf("test_article_java_2");
-		Configuration conf = HBaseConfiguration.create();
-		Connection conn = ConnectionFactory.createConnection(conf);
-		Table table = conn.getTable(tableName);
-
-		// Put value to test_article_java_2
-		System.out.println("Prepare to write data to: " + table.getName().toString());
-		Put p = new Put(Bytes.toBytes("ARTICLE" + (System.currentTimeMillis()) * 1000));
-		p.addColumn(Bytes.toBytes("basic"), Bytes.toBytes("ArticleTypeID"), Bytes.toBytes(Long.valueOf(52909257)));
-		table.put(p);
-		p = new Put(Bytes.toBytes("ARTICLE" + (System.currentTimeMillis()) * 1000));
-		p.addColumn(Bytes.toBytes("basic"), Bytes.toBytes("ArticleTypeID"), Bytes.toBytes(Long.valueOf(12345678)));
-		table.put(p);
-
-		// Prepare filters
-		System.out.println("Prepare to scan !");
-		FilterList list = new FilterList(FilterList.Operator.MUST_PASS_ONE);
-		SingleColumnValueFilter filter1 = new SingleColumnValueFilter(Bytes.toBytes("basic"),
-				Bytes.toBytes("ArticleTypeID"), CompareOp.EQUAL, Bytes.toBytes(Long.valueOf(52909257)));
-		list.addFilter(filter1);
-
-		// scan with filter
-		Scan s = new Scan();
-		s.addFamily(Bytes.toBytes("basic"));
-		s.setFilter(list);
-		ResultScanner scanner = table.getScanner(s);
-		int num = 0;
-		for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-			num++;
-			System.out.println(rr.toString());
-		}
-
-		System.out.println("Found row: " + num); // 预期 1，结果 1
-	}
 }
 
