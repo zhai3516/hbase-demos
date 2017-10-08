@@ -10,5 +10,6 @@ blog 地址：
 - http://zhaif.us:8080/2017/09/09/python-hbase-tip-1/
 - http://zhaif.us:8080/2017/09/17/python-hbase-tip-2/
 - http://zhaif.us:8080/2017/09/28/python-hbase-tip-3/
+- http://zhaif.us:8080/2017/10/08/python-hbase-tip-4/
 
 

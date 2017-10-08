@@ -184,7 +184,7 @@ if __name__ == '__main__':
     #        print len([i for i in results])  # 期望值为2, 实际报错
     #    except socket.timeout:
     #        conn_pool = None  # catch timeout 后, 清空连接池，下次使用时重新初始化, 仅限单线程模型 !
-    #        print traceback.format_exc()
+    #        print 'time out: reinit conn pool!'
     #    # 不会在出现 `TApplicationException: Missing result` 错误
     #    time.sleep(2)
     #    print '######################################################'
