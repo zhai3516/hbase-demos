@@ -18,7 +18,7 @@ TABLE = 'article'
 def get_connetion_pool(timeout=2):
     global conn_pool
     if conn_pool is None:
-        conn_pool = happybase.ConnectionPool(1)
+        conn_pool = happybase.ConnectionPool(10)
     return conn_pool
 
 
@@ -112,9 +112,6 @@ if __name__ == '__main__':
             print traceback.format_exc()
         time.sleep(5)
         print '######################################################'
-    conn_pool = None
-    results = recent_events_v1(start=0, end=1505646570, table="test_article_java_2")
-    print len([i for i in results])  # 期望值为2, 实际报错
 
     # 问题3修复
     filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257).replace("'", "''"))
