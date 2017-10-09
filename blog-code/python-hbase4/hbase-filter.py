@@ -167,26 +167,26 @@ if __name__ == '__main__':
     # print len([i for i in results])  # 期望值为2 , 实际结果为2
 
     # 问题4复现
-    # for i in range(10):
+    # for i in range(100):
+    # # 有timeout，有 Missing result，有正常查询
     #     try:
-    #         results = recent_events_v3(start=0, end=1505646570, table="test_article_java_2", timeout=0.1)  # 把timeout 设置的非常小观察错误出现
-    #         print len([i for i in results])  # 期望值为2, 实际报错
+    #         results = recent_events_v3(start=0, end=1505646570, table="test_article_java_2")
+    #         print len([i for i in results])
     #     except Exception as e:
-    #         #print traceback.format_exc()
     #         print e
-    #     time.sleep(2)
-    #     print '######################################################'
+    # print '######################################################'
 
     # 问题4修复
-    # for i in range(10):
-    #    try:
-    #        results = recent_events_v3(start=0, end=1505646570, table="test_article_java_2", timeout=0.01)  # 把timeout 设置的非常小观察错误出现
-    #        print len([i for i in results])  # 期望值为2, 实际报错
-    #    except socket.timeout:
-    #        conn_pool = None  # catch timeout 后, 清空连接池，下次使用时重新初始化, 仅限单线程模型 !
-    #        print 'time out: reinit conn pool!'
-    #    # 不会在出现 `TApplicationException: Missing result` 错误
-    #    time.sleep(2)
-    #    print '######################################################'
+    for i in range(30):
+        # 没有 Missing result，只有 timeout 和 有正常查询
+        try:
+            results = recent_events_v3(start=0, end=1505646570, table="test_article_java_2")
+            print len([i for i in results])  # 期望值为2, 实际报错
+        except socket.timeout:
+            conn_pool = None  # catch timeout 后, 清空连接池，下次使用时重新初始化, 仅限单线程模型 !
+            print 'time out: reinit conn pool!'
+            # print traceback.format_exc()
+        # 不会在出现 `TApplicationException: Missing result` 错误
+    print '######################################################'
 
     print "Hello World!"
