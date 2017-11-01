@@ -9,7 +9,6 @@
     http://zhaif.us:8080/2017/10/08/python-hbase-tip-5/
 测试 filter、scan 的一些小问题
 '''
-import socket
 import struct
 import time
 import traceback
@@ -22,7 +21,7 @@ TABLE = 'article'
 
 # 本地环境 timeout 设置为1 时 超时较多
 # 生产环境为 10
-def get_connetion_pool(timeout=1):
+def get_connetion_pool(timeout=10):
     global conn_pool
     if conn_pool is None:
         conn_pool = happybase.ConnectionPool(10, timeout=timeout)
@@ -62,8 +61,8 @@ def recent_events_v3(start, end, table=None, filter_str=None, limit=2000):
         return t.scan(row_start=start_row, row_stop=end_row, filter=filter_str, limit=limit)
 
 
-def recent_events_v4(start, end, table=None, filter_str=None, limit=2000, timeout=2):
-    with get_connetion_pool().connection(timeout) as conn:
+def recent_events_v4(start, end, table=None, filter_str=None, limit=2000):
+    with get_connetion_pool().connection() as conn:
         if table is not None:
             t = conn.table(table)
         else:
@@ -209,9 +208,10 @@ if __name__ == '__main__':
             filter_str = "SingleColumnValueFilter('basic', 'ArticleTypeID', =, 'binary:{value}')".format(value=struct.pack('>q', 52909257))
             results = recent_events_v4(start=0, end=1505646570, table="test_article_java_2", filter_str=filter_str)  # 把timeout 设置的非常小观察错误出现
             print len(results)  # 期望值为2, 实际报错
-        except:
+        except Exception as e:
             # happybase 会catch TException 和 socket.error, 并刷新此连接的 thrift client，不会在出现Broken Pipe
-            print traceback.format_exc()
+            print e
+            #print traceback.format_exc()
         time.sleep(2)
         print '######################################################'
 
